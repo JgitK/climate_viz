@@ -6,6 +6,10 @@ t_data <- read_csv("data/GLB.Ts+dSST.csv", skip=1, na = "***") |>
   select(year = Year, t_diff = `J-D`) |>
   drop_na() 
 
+t_data |>
+  filter(t_diff > 0) |>
+  arrange(year)
+
 annotation <- t_data |> 
   slice(1, n()) |>
   mutate(t_diff = 0,
@@ -16,6 +20,15 @@ max_t_diff <- format(round(max(t_data$t_diff), 1), nsmall = 1)
 t_data |>
   ggplot(aes(x = year, y = t_diff, fill = t_diff)) +
   geom_col(show.legend=FALSE) + # geom bar has summary func built in; geom_col does not
+  annotate(
+    geom = "label", x = 1923.5, y = 0.5,
+    label = "WWII",
+    hjust = "left", color = "red"
+  ) +
+  annotate(
+    geom = "segment",
+    x = 1939, y = 0.5, xend = 1939, yend = 0, color = "red"
+  ) +
   geom_text(data = annotation, aes(x = x, label = year), color = "white") +
   geom_text(x = 1880, y = 1, hjust = 0,
             label = glue("Global temperatures have increased by over {max_t_diff}\u00B0C since {min(t_data$year)}"),
@@ -32,7 +45,9 @@ t_data |>
   theme_void() +
   theme(
     plot.background = element_rect(fill = "black"), 
-    legend.text = element_text(color = "white")
+    legend.text = element_text(color = "white",)
   )
+
+?arrow
 
 ggsave("visuals/temp_barplot.png", width = 7, height = 4)  
