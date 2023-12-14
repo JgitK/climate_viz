@@ -22,6 +22,8 @@ t_data <- bind_rows(last_dec, t_diff, next_jan) |>
          month_number = as.numeric(month) -1,
          this_year = year == 2022) 
 
+t_data
+
 t_data |>
   filter(year == 2022) |>
   slice_max(month_number)
